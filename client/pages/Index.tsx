@@ -10,6 +10,7 @@ interface Customer {
   name: string;
   email: string;
   phone: string;
+  address?: string;
   type: "product" | "service" | "both";
   registeredAt: string;
 }
@@ -23,6 +24,7 @@ export default function Index() {
       name: "John Doe",
       email: "john@example.com",
       phone: "9876543210",
+      address: "123 Main Street, New York, NY 10001",
       type: "both",
       registeredAt: "2024-01-15",
     },
@@ -31,6 +33,7 @@ export default function Index() {
       name: "Jane Smith",
       email: "jane@example.com",
       phone: "9876543211",
+      address: "456 Oak Avenue, Los Angeles, CA 90001",
       type: "product",
       registeredAt: "2024-02-20",
     },
@@ -43,6 +46,7 @@ export default function Index() {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
+  const [registerAddress, setRegisterAddress] = useState("");
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
 
@@ -103,6 +107,7 @@ export default function Index() {
       name: registerName,
       email: registerEmail,
       phone: registerPhone,
+      address: registerAddress,
       type: "both",
       registeredAt: new Date().toISOString().split("T")[0],
     };
@@ -266,6 +271,20 @@ export default function Index() {
                     placeholder="9876543210"
                     value={registerPhone}
                     onChange={(e) => setRegisterPhone(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="text-sm font-medium">
+                    Address
+                  </Label>
+                  <Input
+                    id="address"
+                    type="text"
+                    placeholder="123 Main Street, City, State"
+                    value={registerAddress}
+                    onChange={(e) => setRegisterAddress(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
                   />
                 </div>

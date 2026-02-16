@@ -11,6 +11,7 @@ interface Customer {
   name: string;
   email: string;
   phone: string;
+  address?: string;
   type: "product" | "service" | "both";
   isLoggedIn: boolean;
 }
@@ -133,6 +134,22 @@ export default function Profile() {
                 type="tel"
                 value={formData?.phone || ""}
                 onChange={(e) => handleChange("phone", e.target.value)}
+                disabled={!isEditing}
+                className="h-10 rounded-lg border-gray-200 bg-gray-50 disabled:opacity-75"
+              />
+            </div>
+
+            {/* Address */}
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-sm font-medium">
+                Address
+              </Label>
+              <Input
+                id="address"
+                type="text"
+                placeholder="Enter your address"
+                value={formData?.address || ""}
+                onChange={(e) => handleChange("address", e.target.value)}
                 disabled={!isEditing}
                 className="h-10 rounded-lg border-gray-200 bg-gray-50 disabled:opacity-75"
               />
