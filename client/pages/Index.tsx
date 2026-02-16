@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
 
@@ -17,6 +16,7 @@ interface Customer {
 
 export default function Index() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [customers] = useState<Customer[]>([
     {
       id: "1",
@@ -149,131 +149,148 @@ export default function Index() {
               Customer Portal
             </h2>
 
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-              </TabsList>
+            {/* Tab Buttons */}
+            <div className="grid w-full grid-cols-2 mb-8 gap-2">
+              <button
+                onClick={() => setActiveTab("login")}
+                className={`py-3 px-4 font-medium rounded-lg transition-colors ${
+                  activeTab === "login"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setActiveTab("register")}
+                className={`py-3 px-4 font-medium rounded-lg transition-colors ${
+                  activeTab === "register"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Register
+              </button>
+            </div>
 
-              {/* Login Tab */}
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      className="h-10 rounded-lg border-gray-200"
-                    />
+            {/* Login Tab */}
+            {activeTab === "login" && (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                {loginError && (
+                  <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700">{loginError}</p>
                   </div>
+                )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium">
-                      Password
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      className="h-10 rounded-lg border-gray-200"
-                    />
+                <Button
+                  type="submit"
+                  className="w-full h-10 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                >
+                  Login
+                </Button>
+
+                <p className="text-xs text-gray-500 text-center mt-4">
+                  Demo: Try john@example.com (any password) to test existing
+                  customer
+                </p>
+              </form>
+            )}
+
+            {/* Register Tab */}
+            {activeTab === "register" && (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium">
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={registerName}
+                    onChange={(e) => setRegisterName(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-email" className="text-sm font-medium">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="reg-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-medium">
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="9876543210"
+                    value={registerPhone}
+                    onChange={(e) => setRegisterPhone(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                {registerError && (
+                  <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700">{registerError}</p>
                   </div>
+                )}
 
-                  {loginError && (
-                    <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                      <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-700">{loginError}</p>
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    className="w-full h-10 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
-                  >
-                    Login
-                  </Button>
-
-                  <p className="text-xs text-gray-500 text-center mt-4">
-                    Demo: Try john@example.com (any password) to test existing
-                    customer
-                  </p>
-                </form>
-              </TabsContent>
-
-              {/* Register Tab */}
-              <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="John Doe"
-                      value={registerName}
-                      onChange={(e) => setRegisterName(e.target.value)}
-                      className="h-10 rounded-lg border-gray-200"
-                    />
+                {registerSuccess && (
+                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p className="text-sm text-green-700">{registerSuccess}</p>
                   </div>
+                )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-email" className="text-sm font-medium">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="reg-email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={registerEmail}
-                      onChange={(e) => setRegisterEmail(e.target.value)}
-                      className="h-10 rounded-lg border-gray-200"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm font-medium">
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="9876543210"
-                      value={registerPhone}
-                      onChange={(e) => setRegisterPhone(e.target.value)}
-                      className="h-10 rounded-lg border-gray-200"
-                    />
-                  </div>
-
-                  {registerError && (
-                    <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                      <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-700">{registerError}</p>
-                    </div>
-                  )}
-
-                  {registerSuccess && (
-                    <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                      <p className="text-sm text-green-700">{registerSuccess}</p>
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    className="w-full h-10 bg-secondary hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
-                  >
-                    Register
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+                <Button
+                  type="submit"
+                  className="w-full h-10 bg-secondary hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+                >
+                  Register
+                </Button>
+              </form>
+            )}
           </div>
 
           {/* Info Cards */}
