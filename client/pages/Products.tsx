@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Plus, Minus, Star, Zap, Shield, Heart } from "lucide-react";
+import { ArrowLeft, Star, Zap, Shield, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -18,14 +18,8 @@ interface Product {
   badge?: string;
 }
 
-interface CartItem extends Product {
-  quantity: number;
-}
-
 export default function Products() {
   const navigate = useNavigate();
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [showCart, setShowCart] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
 
@@ -124,21 +118,6 @@ export default function Products() {
       : products.filter((p) => p.category === selectedCategory)
     : products;
 
-  const addToCart = (product: Product) => {
-    const existing = cart.find((item) => item.id === product.id);
-    if (existing) {
-      setCart(
-        cart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
-    }
-  };
-
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) =>
       prev.includes(productId)
@@ -146,30 +125,6 @@ export default function Products() {
         : [...prev, productId]
     );
   };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart(cart.filter((item) => item.id !== productId));
-    } else {
-      setCart(
-        cart.map((item) =>
-          item.id === productId ? { ...item, quantity } : item
-        )
-      );
-    }
-  };
-
-  const totalPrice = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const discount = cart.reduce(
-    (sum, item) =>
-      sum +
-      ((item.originalPrice || item.price) - item.price) * item.quantity,
-    0
-  );
 
   return (
     <DashboardLayout>
@@ -191,19 +146,6 @@ export default function Products() {
                 Explore our premium software solutions and services
               </p>
             </div>
-            {totalItems > 0 && (
-              <button
-                onClick={() => setShowCart(!showCart)}
-                className="ml-auto bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all relative"
-              >
-                <span className="flex items-center gap-2">
-                  🛒 Cart
-                </span>
-                <span className="absolute -top-3 -right-3 bg-red-500 text-white text-xs rounded-full w-7 h-7 flex items-center justify-center font-bold shadow-lg">
-                  {totalItems}
-                </span>
-              </button>
-            )}
           </div>
 
           {/* Stats Bar */}
@@ -268,7 +210,7 @@ export default function Products() {
           </div>
 
           {/* Products Grid */}
-          <div className={showCart ? "lg:col-span-2" : "lg:col-span-3"}>
+          <div className="lg:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredProducts.map((product) => (
                 <div
@@ -379,12 +321,12 @@ export default function Products() {
                         </div>
                       </div>
 
-                      {/* Add to Cart Button */}
+                      {/* View Details Button */}
                       <Button
-                        onClick={() => addToCart(product)}
+                        onClick={() => alert(`${product.name}\n\nPrice: $${product.price.toFixed(2)}\n\nPlease contact our sales team for more details.`)}
                         className="w-full bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg text-white font-bold py-3 rounded-lg transition-all"
                       >
-                        Want This
+                        View Details
                       </Button>
                     </div>
                   </div>
@@ -393,137 +335,6 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Cart Sidebar */}
-          {showCart && (
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24 shadow-lg">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">
-                    Shopping Cart
-                  </h2>
-                  <button
-                    onClick={() => setShowCart(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {cart.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-4xl mb-3">🛒</div>
-                    <p className="text-gray-500 font-medium">
-                      Your cart is empty
-                    </p>
-                    <p className="text-xs text-gray-400 mt-2">
-                      Add products to get started
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {/* Cart Items */}
-                    <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
-                      {cart.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200 hover:border-primary transition-colors"
-                        >
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-14 h-14 rounded-lg object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-sm text-gray-900 line-clamp-1">
-                              {item.name}
-                            </p>
-                            <p className="text-xs text-primary font-bold">
-                              ${item.price.toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 px-2 py-1">
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.id, item.quantity - 1)
-                              }
-                              className="p-1 hover:bg-gray-100 rounded transition-colors"
-                            >
-                              <Minus className="w-3 h-3 text-gray-600" />
-                            </button>
-                            <span className="w-5 text-center font-bold text-gray-900 text-sm">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() =>
-                                updateQuantity(item.id, item.quantity + 1)
-                              }
-                              className="p-1 hover:bg-gray-100 rounded transition-colors"
-                            >
-                              <Plus className="w-3 h-3 text-gray-600" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Cart Summary */}
-                    <div className="space-y-3 pt-4 border-t-2 border-gray-200">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-semibold text-gray-900">
-                          ${totalPrice.toFixed(2)}
-                        </span>
-                      </div>
-
-                      {discount > 0 && (
-                        <div className="flex justify-between text-sm bg-green-50 p-2 rounded-lg border border-green-200">
-                          <span className="text-green-700 font-medium">
-                            Savings:
-                          </span>
-                          <span className="font-bold text-green-700">
-                            -${discount.toFixed(2)}
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Tax (10%):</span>
-                        <span className="font-semibold text-gray-900">
-                          ${(totalPrice * 0.1).toFixed(2)}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between bg-gradient-to-r from-primary to-blue-600 text-white p-3 rounded-lg">
-                        <span className="font-bold">Total:</span>
-                        <span className="text-lg font-bold">
-                          ${(totalPrice * 1.1).toFixed(2)}
-                        </span>
-                      </div>
-
-                      <Button
-                        className="w-full bg-gradient-to-r from-primary to-blue-600 hover:shadow-xl text-white font-bold py-3 rounded-lg transition-all"
-                        onClick={() =>
-                          alert(
-                            `Order placed! Total: $${(totalPrice * 1.1).toFixed(2)}`
-                          )
-                        }
-                      >
-                        Checkout Now
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2"
-                        onClick={() => setShowCart(false)}
-                      >
-                        Continue Shopping
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </DashboardLayout>
