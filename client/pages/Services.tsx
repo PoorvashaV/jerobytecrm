@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
@@ -182,10 +181,11 @@ export default function Services() {
                   key={complaint.id}
                   className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                 >
-                  <Checkbox
+                  <input
+                    type="checkbox"
                     checked={selectedComplaints.includes(complaint.id)}
                     onChange={() => toggleComplaint(complaint.id)}
-                    className="mt-1"
+                    className="w-5 h-5 rounded border-gray-300 text-primary cursor-pointer mt-0.5"
                   />
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">
