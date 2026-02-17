@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Star, Zap, Shield, Heart } from "lucide-react";
+import { ArrowLeft, Star, Zap, Shield, Heart, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -22,6 +22,7 @@ export default function Products() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const products: Product[] = [
     {
@@ -124,6 +125,22 @@ export default function Products() {
         ? prev.filter((id) => id !== productId)
         : [...prev, productId]
     );
+  };
+
+  const getQuantity = (productId: string) => quantities[productId] || 1;
+
+  const increaseQuantity = (productId: string) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: (prev[productId] || 1) + 1,
+    }));
+  };
+
+  const decreaseQuantity = (productId: string) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: Math.max(1, (prev[productId] || 1) - 1),
+    }));
   };
 
   return (
@@ -321,13 +338,36 @@ export default function Products() {
                         </div>
                       </div>
 
-                      {/* View Details Button */}
-                      <Button
-                        onClick={() => alert(`${product.name}\n\nPrice: $${product.price.toFixed(2)}\n\nPlease contact our sales team for more details.`)}
-                        className="w-full bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg text-white font-bold py-3 rounded-lg transition-all"
-                      >
-                        View Details
-                      </Button>
+                      {/* Quantity Controls and Buy Now Button */}
+                      <div className="space-y-3">
+                        {/* Quantity Selector */}
+                        <div className="flex items-center gap-2 border border-gray-200 rounded-lg p-2">
+                          <span className="text-xs font-semibold text-gray-700 flex-1">Qty</span>
+                          <button
+                            onClick={() => decreaseQuantity(product.id)}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            <Minus className="w-4 h-4 text-gray-600" />
+                          </button>
+                          <span className="w-8 text-center font-semibold text-gray-900">
+                            {getQuantity(product.id)}
+                          </span>
+                          <button
+                            onClick={() => increaseQuantity(product.id)}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            <Plus className="w-4 h-4 text-gray-600" />
+                          </button>
+                        </div>
+
+                        {/* Buy Now Button */}
+                        <Button
+                          onClick={() => alert(`${product.name}\n\nQuantity: ${getQuantity(product.id)}\nPrice: $${(product.price * getQuantity(product.id)).toFixed(2)}\n\nAdded to cart! Please contact our sales team to proceed with checkout.`)}
+                          className="w-full bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg text-white font-bold py-3 rounded-lg transition-all"
+                        >
+                          Buy Now
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
