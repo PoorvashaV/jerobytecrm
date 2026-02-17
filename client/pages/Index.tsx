@@ -47,6 +47,8 @@ export default function Index() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
   const [registerAddress, setRegisterAddress] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
 
@@ -83,7 +85,7 @@ export default function Index() {
     setRegisterError("");
     setRegisterSuccess("");
 
-    if (!registerName || !registerEmail || !registerPhone) {
+    if (!registerName || !registerEmail || !registerPhone || !registerPassword || !registerConfirmPassword) {
       setRegisterError("Please fill in all fields");
       return;
     }
@@ -98,6 +100,17 @@ export default function Index() {
     // Phone validation (basic)
     if (registerPhone.length < 10) {
       setRegisterError("Please enter a valid phone number");
+      return;
+    }
+
+    // Password validation
+    if (registerPassword.length < 6) {
+      setRegisterError("Password must be at least 6 characters long");
+      return;
+    }
+
+    if (registerPassword !== registerConfirmPassword) {
+      setRegisterError("Passwords do not match");
       return;
     }
 
@@ -122,7 +135,14 @@ export default function Index() {
     );
 
     setRegisterSuccess("Registration successful! Redirecting to dashboard...");
+    // Clear form fields
     setTimeout(() => {
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPhone("");
+      setRegisterAddress("");
+      setRegisterPassword("");
+      setRegisterConfirmPassword("");
       navigate("/dashboard");
     }, 1500);
   };
@@ -285,6 +305,35 @@ export default function Index() {
                     placeholder="123 Main Street, City, State"
                     value={registerAddress}
                     onChange={(e) => setRegisterAddress(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <Input
+                    id="reg-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={registerPassword}
+                    onChange={(e) => setRegisterPassword(e.target.value)}
+                    className="h-10 rounded-lg border-gray-200"
+                  />
+                  <p className="text-xs text-gray-500">Minimum 6 characters</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-confirm-password" className="text-sm font-medium">
+                    Confirm Password
+                  </Label>
+                  <Input
+                    id="reg-confirm-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={registerConfirmPassword}
+                    onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
                   />
                 </div>
