@@ -54,35 +54,36 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="border-b sticky top-0 z-40" style={{ backgroundColor: 'rgba(74, 144, 226, 1)', borderColor: 'rgba(240, 243, 246, 1)', borderWidth: '1px' }}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">JB</span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 hidden sm:block">
+            <h1 className="text-xl font-bold hidden sm:block" style={{ color: 'white' }}>
               Jerobyte CRM
             </h1>
           </div>
 
           {/* Desktop Header Actions */}
           <div className="hidden sm:flex items-center gap-6">
-            <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="relative p-2 rounded-lg transition-colors" style={{ color: 'white' }}>
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-              <User className="w-5 h-5 text-gray-600" />
+            <div className="flex items-center gap-3 pl-6" style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.3)' }}>
+              <User className="w-5 h-5" style={{ color: 'white' }} />
               <div className="text-sm">
-                <p className="font-medium text-gray-900">{customer.name}</p>
-                <p className="text-gray-500">{customer.email}</p>
+                <p className="font-medium" style={{ color: 'white' }}>{customer.name}</p>
+                <p style={{ color: 'rgba(232, 235, 243, 1)' }}>{customer.email}</p>
               </div>
             </div>
             <Button
               onClick={handleLogout}
               variant="ghost"
               size="sm"
-              className="text-red-600 hover:bg-red-50"
+              className="hover:bg-opacity-80"
+              style={{ color: 'white' }}
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -92,7 +93,8 @@ export default function Dashboard() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            className="sm:hidden p-2 rounded-lg"
+            style={{ color: 'white' }}
           >
             {mobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -106,8 +108,8 @@ export default function Dashboard() {
         {mobileMenuOpen && (
           <div className="sm:hidden border-t border-gray-200 p-4 space-y-3">
             <div className="text-sm">
-              <p className="font-medium text-gray-900">{customer.name}</p>
-              <p className="text-gray-500 text-xs">{customer.email}</p>
+              <p className="font-medium" style={{ color: 'white' }}>{customer.name}</p>
+              <p className="text-xs" style={{ color: 'rgba(232, 235, 243, 1)' }}>{customer.email}</p>
             </div>
             <div className="flex gap-2">
               <button className="flex-1 relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
@@ -130,7 +132,7 @@ export default function Dashboard() {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="hidden md:block w-64 bg-white border-r border-gray-200">
+        <div className="hidden md:block w-64 border-r border-gray-200" style={{ backgroundColor: 'rgba(213, 227, 243, 1)' }}>
           <DashboardNav customerType={customer.type} />
         </div>
 
@@ -153,17 +155,17 @@ export default function Dashboard() {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="rounded-lg border border-gray-200 p-6" style={{ backgroundColor: 'rgba(126, 211, 33, 1)' }}>
                 <div className="text-sm text-gray-600 mb-2">Active Orders</div>
                 <div className="text-3xl font-bold text-gray-900">2</div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="rounded-lg border border-gray-200 p-6" style={{ backgroundColor: 'rgba(245, 166, 35, 1)' }}>
                 <div className="text-sm text-gray-600 mb-2">
                   Service Bookings
                 </div>
                 <div className="text-3xl font-bold text-gray-900">1</div>
               </div>
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="rounded-lg border border-gray-200 p-6" style={{ backgroundColor: 'rgba(208, 2, 27, 0.86)' }}>
                 <div className="text-sm text-gray-600 mb-2">Pending Invoices</div>
                 <div className="text-3xl font-bold text-gray-900">3</div>
               </div>

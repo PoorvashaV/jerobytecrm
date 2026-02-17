@@ -48,15 +48,16 @@ export default function DashboardNav({ customerType }: DashboardNavProps) {
           <Link
             key={item.href}
             to={item.href}
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium text-sm",
-              isActive
-                ? "bg-primary text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            )}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium text-sm"
+            style={{ backgroundColor: 'rgba(74, 144, 226, 1)' }}
           >
             <Icon className="w-5 h-5 flex-shrink-0" />
-            <span>{item.label}</span>
+            <span style={{
+              color: item.label === "Profile" ? 'rgba(233, 239, 248, 1)' :
+                     item.label === "Product Catalog" ? 'rgba(238, 242, 250, 1)' :
+                     item.label === "Service Booking" ? 'rgba(236, 241, 250, 1)' :
+                     'rgba(236, 242, 251, 1)'
+            }}>{item.label}</span>
           </Link>
         );
       })}
