@@ -15,7 +15,14 @@ interface Product {
   rating: number;
   reviews: number;
   description: string;
-  badge?: string;
+  inStock: boolean;
+}
+
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 export default function Products() {
@@ -23,8 +30,10 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   const products: Product[] = [
+    // Battery Products
     {
       id: "1",
       sno: 1,
@@ -37,7 +46,7 @@ export default function Products() {
       rating: 4.8,
       reviews: 45,
       description: "150AH Lithium Battery with 24 months warranty",
-      badge: "Best Seller",
+      inStock: true,
     },
     {
       id: "2",
@@ -51,7 +60,7 @@ export default function Products() {
       rating: 4.9,
       reviews: 38,
       description: "200AH Lithium Battery with 24 months warranty",
-      badge: "Premium",
+      inStock: true,
     },
     {
       id: "3",
@@ -65,6 +74,7 @@ export default function Products() {
       rating: 4.7,
       reviews: 52,
       description: "100AH Lithium Battery with 24 months warranty",
+      inStock: false,
     },
     {
       id: "4",
@@ -78,6 +88,7 @@ export default function Products() {
       rating: 4.8,
       reviews: 48,
       description: "150AH Lithium Battery with 24 months warranty",
+      inStock: true,
     },
     {
       id: "5",
@@ -91,7 +102,7 @@ export default function Products() {
       rating: 4.9,
       reviews: 41,
       description: "150AH Lithium Battery with 24 months warranty",
-      badge: "Trending",
+      inStock: true,
     },
     {
       id: "6",
@@ -105,6 +116,7 @@ export default function Products() {
       rating: 4.8,
       reviews: 39,
       description: "200AH Lithium Battery with 24 months warranty",
+      inStock: true,
     },
     {
       id: "7",
@@ -118,6 +130,7 @@ export default function Products() {
       rating: 4.7,
       reviews: 50,
       description: "100AH Lithium Battery with 24 months warranty",
+      inStock: true,
     },
     {
       id: "8",
@@ -131,12 +144,129 @@ export default function Products() {
       rating: 4.8,
       reviews: 46,
       description: "150AH Lithium Battery with 24 months warranty",
+      inStock: true,
+    },
+    // CPU Products
+    {
+      id: "9",
+      sno: 1,
+      name: "Intel Core i7-13700K",
+      image:
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
+      price: 45000,
+      originalPrice: 52000,
+      category: "CPU",
+      rating: 4.9,
+      reviews: 128,
+      description: "High-performance desktop processor with 16 cores",
+      inStock: true,
+    },
+    {
+      id: "10",
+      sno: 2,
+      name: "AMD Ryzen 7 7700X",
+      image:
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
+      price: 42000,
+      originalPrice: 48500,
+      category: "CPU",
+      rating: 4.8,
+      reviews: 95,
+      description: "Powerful processor with 8 cores for gaming and workstations",
+      inStock: true,
+    },
+    {
+      id: "11",
+      sno: 3,
+      name: "Intel Core i5-13600K",
+      image:
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
+      price: 28000,
+      originalPrice: 32000,
+      category: "CPU",
+      rating: 4.7,
+      reviews: 156,
+      description: "Mid-range processor ideal for gaming and content creation",
+      inStock: false,
+    },
+    {
+      id: "12",
+      sno: 4,
+      name: "AMD Ryzen 5 5600X",
+      image:
+        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
+      price: 18500,
+      originalPrice: 21000,
+      category: "CPU",
+      rating: 4.6,
+      reviews: 203,
+      description: "Budget-friendly processor with excellent performance",
+      inStock: true,
+    },
+    // CCTV Products
+    {
+      id: "13",
+      sno: 1,
+      name: "Hikvision 4MP Turret Camera",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+      price: 8500,
+      originalPrice: 10000,
+      category: "CCTV",
+      rating: 4.8,
+      reviews: 67,
+      description: "4MP resolution with night vision and motion detection",
+      inStock: true,
+    },
+    {
+      id: "14",
+      sno: 2,
+      name: "Dahua 8MP Bullet Camera",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+      price: 12000,
+      originalPrice: 14500,
+      category: "CCTV",
+      rating: 4.9,
+      reviews: 54,
+      description: "8MP resolution with 50m infrared night vision",
+      inStock: true,
+    },
+    {
+      id: "15",
+      sno: 3,
+      name: "CP Plus Dome Camera",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+      price: 6500,
+      originalPrice: 7800,
+      category: "CCTV",
+      rating: 4.7,
+      reviews: 89,
+      description: "2MP dome camera with weatherproof design",
+      inStock: false,
+    },
+    {
+      id: "16",
+      sno: 4,
+      name: "Uniview PTZ Camera",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+      price: 22000,
+      originalPrice: 26000,
+      category: "CCTV",
+      rating: 4.8,
+      reviews: 42,
+      description: "Pan-Tilt-Zoom camera with 4MP resolution",
+      inStock: true,
     },
   ];
 
   const categories = [
     "All Products",
     "Battery",
+    "CPU",
+    "CCTV",
   ];
 
   const filteredProducts = selectedCategory
@@ -169,6 +299,33 @@ export default function Products() {
     }));
   };
 
+  const addToCart = (product: Product, quantity: number) => {
+    const existingItem = cart.find((item) => item.productId === product.id);
+    if (existingItem) {
+      setCart((prev) =>
+        prev.map((item) =>
+          item.productId === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        )
+      );
+    } else {
+      setCart((prev) => [
+        ...prev,
+        {
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: quantity,
+        },
+      ]);
+    }
+    // Show alert with cart confirmation
+    alert(
+      `✓ Added to Cart\n\nProduct: ${product.name}\nQuantity: ${quantity}\nPrice: ₹${(product.price * quantity).toLocaleString('en-IN')}\n\nTotal Items in Cart: ${cart.length + 1}`
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto">
@@ -186,7 +343,7 @@ export default function Products() {
                 Product Catalog
               </h1>
               <p className="text-gray-600 mt-2">
-                Explore our premium software solutions and services
+                Explore our premium battery, CPU, and CCTV products
               </p>
             </div>
           </div>
@@ -275,11 +432,13 @@ export default function Products() {
                           <span>#</span>
                           <span>{product.sno}</span>
                         </div>
-                        {product.badge && (
-                          <div className="inline-flex bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            {product.badge}
-                          </div>
-                        )}
+                        <div className={`inline-flex text-white text-xs font-bold px-3 py-1 rounded-full ${
+                          product.inStock
+                            ? "bg-gradient-to-r from-green-400 to-green-600"
+                            : "bg-gradient-to-r from-red-400 to-red-600"
+                        }`}>
+                          {product.inStock ? "Available" : "Out of Stock"}
+                        </div>
                       </div>
                       <button
                         onClick={() => toggleWishlist(product.id)}
@@ -354,11 +513,11 @@ export default function Products() {
                       <div className="flex items-center justify-between mb-3">
                         <div>
                           <span className="text-3xl font-bold text-primary">
-                            ${product.price.toFixed(2)}
+                            ₹{product.price.toLocaleString('en-IN')}
                           </span>
                           {product.originalPrice && (
                             <span className="ml-2 text-sm text-gray-500 line-through">
-                              ${product.originalPrice.toFixed(2)}
+                              ₹{product.originalPrice.toLocaleString('en-IN')}
                             </span>
                           )}
                         </div>
@@ -367,11 +526,18 @@ export default function Products() {
                       {/* Quantity Controls and Buy Now Button */}
                       <div className="space-y-3">
                         {/* Quantity Selector */}
-                        <div className="flex items-center gap-2 border border-gray-200 rounded-lg p-2">
+                        <div className={`flex items-center gap-2 border border-gray-200 rounded-lg p-2 ${
+                          !product.inStock ? "opacity-50 cursor-not-allowed bg-gray-50" : ""
+                        }`}>
                           <span className="text-xs font-semibold text-gray-700 flex-1">Qty</span>
                           <button
                             onClick={() => decreaseQuantity(product.id)}
-                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            disabled={!product.inStock}
+                            className={`p-1 rounded transition-colors ${
+                              product.inStock
+                                ? "hover:bg-gray-100"
+                                : "cursor-not-allowed"
+                            }`}
                           >
                             <Minus className="w-4 h-4 text-gray-600" />
                           </button>
@@ -380,7 +546,12 @@ export default function Products() {
                           </span>
                           <button
                             onClick={() => increaseQuantity(product.id)}
-                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            disabled={!product.inStock}
+                            className={`p-1 rounded transition-colors ${
+                              product.inStock
+                                ? "hover:bg-gray-100"
+                                : "cursor-not-allowed"
+                            }`}
                           >
                             <Plus className="w-4 h-4 text-gray-600" />
                           </button>
@@ -388,10 +559,15 @@ export default function Products() {
 
                         {/* Buy Now Button */}
                         <Button
-                          onClick={() => alert(`${product.name}\n\nQuantity: ${getQuantity(product.id)}\nPrice: $${(product.price * getQuantity(product.id)).toFixed(2)}\n\nAdded to cart! Please contact our sales team to proceed with checkout.`)}
-                          className="w-full bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg text-white font-bold py-3 rounded-lg transition-all"
+                          onClick={() => addToCart(product, getQuantity(product.id))}
+                          disabled={!product.inStock}
+                          className={`w-full text-white font-bold py-3 rounded-lg transition-all ${
+                            product.inStock
+                              ? "bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg cursor-pointer"
+                              : "bg-gray-400 cursor-not-allowed opacity-50"
+                          }`}
                         >
-                          Buy Now
+                          {product.inStock ? "Buy Now" : "Out of Stock"}
                         </Button>
                       </div>
                     </div>
