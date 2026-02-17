@@ -5,44 +5,17 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
 
-interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address?: string;
-  type: "product" | "service" | "both";
-  registeredAt: string;
-}
-
 export default function Index() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-  const [customers] = useState<Customer[]>([
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "9876543210",
-      address: "123 Main Street, New York, NY 10001",
-      type: "both",
-      registeredAt: "2024-01-15",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "9876543211",
-      address: "456 Oak Avenue, Los Angeles, CA 90001",
-      type: "product",
-      registeredAt: "2024-02-20",
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Login states
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  // Register states
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
@@ -52,41 +25,79 @@ export default function Index() {
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Handle Login
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
+    setIsLoading(true);
 
     if (!loginEmail || !loginPassword) {
       setLoginError("Please fill in all fields");
+      setIsLoading(false);
       return;
     }
 
-    const existingCustomer = customers.find((c) => c.email === loginEmail);
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: loginEmail,
+          password: loginPassword,
+        }),
+      });
 
-    if (!existingCustomer) {
-      setLoginError("Customer not found. Please register first.");
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setLoginError(data.error || "Login failed");
+        setIsLoading(false);
+        return;
+      }
+
+      // Store user info in localStorage
+      localStorage.setItem(
+        "currentCustomer",
+        JSON.stringify({
+          id: data.customer.id,
+          name: data.customer.name,
+          email: data.customer.email,
+          phone: data.customer.phone,
+          address: data.customer.address,
+          type: data.customer.type,
+          isLoggedIn: true,
+        })
+      );
+
+      // Reset form
+      setLoginEmail("");
+      setLoginPassword("");
+      setIsLoading(false);
+
+      navigate("/dashboard");
+    } catch (error) {
+      setLoginError("Network error: Unable to login. Please try again.");
+      console.error(error);
+      setIsLoading(false);
     }
-
-    // Store customer info in localStorage for demo purposes
-    localStorage.setItem(
-      "currentCustomer",
-      JSON.stringify({
-        ...existingCustomer,
-        isLoggedIn: true,
-      })
-    );
-
-    navigate("/dashboard");
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  // Handle Register
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegisterError("");
     setRegisterSuccess("");
+    setIsLoading(true);
 
-    if (!registerName || !registerEmail || !registerPhone || !registerPassword || !registerConfirmPassword) {
+    if (
+      !registerName ||
+      !registerEmail ||
+      !registerPhone ||
+      !registerPassword ||
+      !registerConfirmPassword
+    ) {
       setRegisterError("Please fill in all fields");
+      setIsLoading(false);
       return;
     }
 
@@ -94,72 +105,114 @@ export default function Index() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(registerEmail)) {
       setRegisterError("Please enter a valid email address");
+      setIsLoading(false);
       return;
     }
 
-    // Phone validation (basic)
+    // Phone validation
     if (registerPhone.length < 10) {
       setRegisterError("Please enter a valid phone number");
+      setIsLoading(false);
       return;
     }
 
     // Password validation
     if (registerPassword.length < 6) {
       setRegisterError("Password must be at least 6 characters long");
+      setIsLoading(false);
       return;
     }
 
     if (registerPassword !== registerConfirmPassword) {
       setRegisterError("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
-    // Create new customer
-    const newCustomer: Customer = {
-      id: String(customers.length + 1),
-      name: registerName,
-      email: registerEmail,
-      phone: registerPhone,
-      address: registerAddress,
-      type: "both",
-      registeredAt: new Date().toISOString().split("T")[0],
-    };
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: registerName,
+          email: registerEmail,
+          phone: registerPhone,
+          address: registerAddress,
+          password: registerPassword,
+        }),
+      });
 
-    // Store in localStorage
-    localStorage.setItem(
-      "currentCustomer",
-      JSON.stringify({
-        ...newCustomer,
-        isLoggedIn: true,
-      })
-    );
+      const data = await response.json();
 
-    setRegisterSuccess("Registration successful! Redirecting to dashboard...");
-    // Clear form fields
-    setTimeout(() => {
-      setRegisterName("");
-      setRegisterEmail("");
-      setRegisterPhone("");
-      setRegisterAddress("");
-      setRegisterPassword("");
-      setRegisterConfirmPassword("");
-      navigate("/dashboard");
-    }, 1500);
+      if (!response.ok) {
+        setRegisterError(data.error || "Registration failed");
+        setIsLoading(false);
+        return;
+      }
+
+      // Only show success if response is ok
+      if (data.success) {
+        // Store user info in localStorage
+        localStorage.setItem(
+          "currentCustomer",
+          JSON.stringify({
+            id: data.customer.id,
+            name: data.customer.name,
+            email: data.customer.email,
+            phone: data.customer.phone,
+            address: data.customer.address,
+            type: data.customer.type,
+            isLoggedIn: true,
+          })
+        );
+
+        setRegisterSuccess(
+          "Registration successful! Redirecting to dashboard..."
+        );
+
+        // Clear form and redirect
+        setTimeout(() => {
+          setRegisterName("");
+          setRegisterEmail("");
+          setRegisterPhone("");
+          setRegisterAddress("");
+          setRegisterPassword("");
+          setRegisterConfirmPassword("");
+          setIsLoading(false);
+          navigate("/dashboard");
+        }, 1500);
+      }
+    } catch (error) {
+      setRegisterError("Network error: Unable to register. Please try again.");
+      console.error(error);
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Logo and Header */}
-      <div className="pt-8 pb-12 px-4 text-center" style={{ backgroundColor: 'rgba(74, 144, 226, 1)' }}>
+      <div
+        className="pt-8 pb-12 px-4 text-center"
+        style={{ backgroundColor: "rgba(74, 144, 226, 1)" }}
+      >
         <div className="inline-flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-            <span className="font-bold text-xl" style={{ color: 'rgba(255, 255, 255, 1)' }}>JB</span>
+            <span
+              className="font-bold text-xl"
+              style={{ color: "rgba(255, 255, 255, 1)" }}
+            >
+              JB
+            </span>
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
               Jerobyte Software
             </h1>
-            <p className="text-sm md:text-base" style={{ color: 'rgba(221, 228, 238, 1)' }}>
+            <p
+              className="text-sm md:text-base"
+              style={{ color: "rgba(221, 228, 238, 1)" }}
+            >
               Easy Profit - Post Sales Service CRM
             </p>
           </div>
@@ -167,7 +220,10 @@ export default function Index() {
       </div>
 
       {/* Main Content */}
-      <div className="flex items-center justify-center px-4 pb-12" style={{ backgroundColor: 'rgba(234, 241, 250, 1)' }}>
+      <div
+        className="flex items-center justify-center px-4 pb-12"
+        style={{ backgroundColor: "rgba(234, 241, 250, 1)" }}
+      >
         <div className="w-full max-w-md">
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-10">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -212,6 +268,7 @@ export default function Index() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -226,6 +283,7 @@ export default function Index() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -238,15 +296,11 @@ export default function Index() {
 
                 <Button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full h-10 bg-primary hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
                 >
-                  Login
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
-
-                <p className="text-xs text-gray-500 text-center mt-4">
-                  Demo: Try john@example.com (any password) to test existing
-                  customer
-                </p>
               </form>
             )}
 
@@ -264,6 +318,7 @@ export default function Index() {
                     value={registerName}
                     onChange={(e) => setRegisterName(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -278,6 +333,7 @@ export default function Index() {
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -292,6 +348,7 @@ export default function Index() {
                     value={registerPhone}
                     onChange={(e) => setRegisterPhone(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -306,6 +363,7 @@ export default function Index() {
                     value={registerAddress}
                     onChange={(e) => setRegisterAddress(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -320,12 +378,16 @@ export default function Index() {
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                   <p className="text-xs text-gray-500">Minimum 6 characters</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="reg-confirm-password" className="text-sm font-medium">
+                  <Label
+                    htmlFor="reg-confirm-password"
+                    className="text-sm font-medium"
+                  >
                     Confirm Password
                   </Label>
                   <Input
@@ -335,6 +397,7 @@ export default function Index() {
                     value={registerConfirmPassword}
                     onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                     className="h-10 rounded-lg border-gray-200"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -353,9 +416,10 @@ export default function Index() {
 
                 <Button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full h-10 bg-secondary hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
                 >
-                  Register
+                  {isLoading ? "Registering..." : "Register"}
                 </Button>
               </form>
             )}
