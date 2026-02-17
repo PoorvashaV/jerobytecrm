@@ -153,7 +153,7 @@ export default function Index() {
       <div className="pt-8 pb-12 px-4 text-center" style={{ backgroundColor: 'rgba(74, 144, 226, 1)' }}>
         <div className="inline-flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-            <span className="font-bold text-xl" style={{ color: 'rgba(179, 187, 195, 1)' }}>JB</span>
+            <span className="font-bold text-xl" style={{ color: 'rgba(255, 255, 255, 1)' }}>JB</span>
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
