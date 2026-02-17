@@ -164,7 +164,7 @@ export default function Products() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Categories */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24 shadow-sm">
+            <div className="rounded-xl border border-gray-200 p-6 sticky top-24 shadow-sm" style={{ backgroundColor: 'rgba(217, 232, 248, 1)', borderColor: 'rgba(132, 171, 210, 1)', borderWidth: '1px' }}>
               <h3 className="text-lg font-bold text-gray-900 mb-4">
                 Categories
               </h3>

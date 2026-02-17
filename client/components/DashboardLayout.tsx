@@ -65,13 +65,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="border-b sticky top-0 z-40" style={{ backgroundColor: 'rgba(74, 144, 226, 1)' }}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={goHome}>
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">JB</span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 hidden sm:block">
+            <h1 className="text-xl font-bold hidden sm:block" style={{ color: 'white' }}>
               Jerobyte CRM
             </h1>
           </div>
@@ -81,7 +81,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2 rounded-lg transition-colors"
+                style={{ color: 'white' }}
               >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -107,20 +108,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+            <div className="flex items-center gap-3 pl-4" style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.3)' }}>
               <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
                 {customer.name.charAt(0)}
               </div>
               <div className="text-sm">
-                <p className="font-medium text-gray-900">{customer.name}</p>
-                <p className="text-gray-500 text-xs">{customer.email}</p>
+                <p className="font-medium" style={{ color: 'white' }}>{customer.name}</p>
+                <p style={{ borderWidth: '1px', borderColor: 'rgba(236, 241, 246, 1)', color: 'rgba(241, 243, 246, 1)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{customer.email}</p>
               </div>
             </div>
             <Button
               onClick={handleLogout}
               variant="ghost"
               size="sm"
-              className="text-red-600 hover:bg-red-50"
+              style={{ color: 'white' }}
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -130,7 +131,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            className="sm:hidden p-2 rounded-lg"
+            style={{ color: 'white' }}
           >
             {mobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -142,7 +144,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-gray-200 bg-gray-50">
+          <div className="sm:hidden border-t bg-gray-50" style={{ borderColor: 'rgba(236, 241, 246, 1)' }}>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
                 <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
@@ -169,13 +171,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="hidden md:block w-64 bg-white border-r border-gray-200 max-h-[calc(100vh-73px)] overflow-y-auto sticky top-[73px]">
+        <div className="hidden md:block w-64 border-r border-gray-200 max-h-[calc(100vh-73px)] overflow-y-auto sticky top-[73px]" style={{ backgroundColor: 'rgba(209, 225, 246, 1)' }}>
           <DashboardNav customerType={customer.type} />
         </div>
 
         {/* Mobile Sidebar */}
         {mobileMenuOpen && (
-          <div className="md:hidden w-full bg-white border-b border-gray-200 max-h-96 overflow-y-auto">
+          <div className="md:hidden w-full border-b border-gray-200 max-h-96 overflow-y-auto" style={{ backgroundColor: 'rgba(209, 225, 246, 1)' }}>
             <DashboardNav customerType={customer.type} />
           </div>
         )}
