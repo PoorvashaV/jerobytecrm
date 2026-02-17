@@ -150,16 +150,16 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Logo and Header */}
-      <div className="pt-8 pb-12 px-4 text-center">
+      <div className="pt-8 pb-12 px-4 text-center" style={{ backgroundColor: 'rgba(74, 144, 226, 1)' }}>
         <div className="inline-flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">JB</span>
+            <span className="font-bold text-xl" style={{ color: 'rgba(179, 187, 195, 1)' }}>JB</span>
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
               Jerobyte Software
             </h1>
-            <p className="text-gray-600 text-sm md:text-base">
+            <p className="text-sm md:text-base" style={{ color: 'rgba(221, 228, 238, 1)' }}>
               Easy Profit - Post Sales Service CRM
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function Index() {
       </div>
 
       {/* Main Content */}
-      <div className="flex items-center justify-center px-4 pb-12">
+      <div className="flex items-center justify-center px-4 pb-12" style={{ backgroundColor: 'rgba(234, 241, 250, 1)' }}>
         <div className="w-full max-w-md">
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-10">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
