@@ -48,19 +48,54 @@ export async function registerUser(
   passwordHash: string,
   customerType: string
 ) {
+  // 🔍 DEBUG LOGS
+  console.log("🔐 registerUser called with:", {
+    name,
+    email,
+    phone,
+    address,
+    customerType, // The value being inserted
+  });
+
+  // ✅ CRITICAL: Explicitly specify all columns and use parameterized values
   const query = `
     INSERT INTO users (name, email, phone, address, password_hash, customer_type, created_at, updated_at)
-    VALUES ($1,$2,$3,$4,$5,$6,NOW(),NOW())
+    VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
     RETURNING id, name, email, phone, address, customer_type, created_at, updated_at;
   `;
+  
   const values = [name, email, phone, address, passwordHash, customerType];
-  const result = await pool.query(query, values);
-  return result.rows[0];
+  
+  console.log("📊 Query parameters:", values); // DEBUG
+  
+  try {
+    const result = await pool.query(query, values);
+    
+    console.log("✅ User inserted successfully:", result.rows[0]); // DEBUG
+    console.log("✅ Returned customer_type:", result.rows[0].customer_type); // DEBUG
+    
+    return result.rows[0];
+  } catch (err) {
+    console.error("❌ Error inserting user:", err);
+    throw err;
+  }
 }
 
 // Find user by email
 export async function findUserByEmail(email: string) {
   const query = "SELECT * FROM users WHERE email = $1;";
-  const result = await pool.query(query, [email]);
-  return result.rows[0];
+  
+  try {
+    const result = await pool.query(query, [email]);
+    
+    if (result.rows.length > 0) {
+      console.log("📦 User found:", result.rows[0]); // DEBUG
+      console.log("📦 Found customer_type:", result.rows[0].customer_type); // DEBUG
+    }
+    
+    return result.rows[0];
+  } catch (err) {
+    console.error("❌ Error finding user:", err);
+    throw err;
+  }
 }
