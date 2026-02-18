@@ -1,7 +1,15 @@
 {
-  "name": "fusion-starter",
+  "name": "jerobytecrm",
+  "version": "1.0.0",
+  "description": "Easy Profit - Post Sales Service CRM",
   "private": true,
   "type": "module",
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "pkg": {
     "assets": [
       "dist/spa/*"
@@ -12,19 +20,31 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:server": "tsx server/start.ts",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
+    "start:dev": "npm run dev:all",
     "test": "vitest --run",
-    "format.fix": "prettier --write .",
-    "typecheck": "tsc"
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck && npm run format:check",
+    "clean": "rm -rf dist node_modules",
+    "reinstall": "npm run clean && npm install"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "pg": "^8.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -74,7 +94,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "cors": "^2.8.5",
+    "concurrently": "^8.2.2",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.12",
@@ -84,12 +104,9 @@
     "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
-    "react": "^18.3.1",
     "react-day-picker": "^9.8.1",
-    "react-dom": "^18.3.1",
     "react-hook-form": "^7.62.0",
     "react-resizable-panels": "^3.0.4",
-    "react-router-dom": "^6.30.1",
     "recharts": "^2.12.7",
     "serverless-http": "^3.2.0",
     "sonner": "^1.7.4",

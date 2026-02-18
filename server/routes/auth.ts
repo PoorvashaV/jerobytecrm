@@ -1,92 +1,128 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { registerCustomer, findCustomerByEmail } from "../db/queries";
+import { registerUser, findUserByEmail } from "../db/queries";
 
 const router = express.Router();
 
-// Register endpoint
-router.post("/api/register", async (req: Request, res: Response) => {
-  const { name, email, phone, address, password } = req.body;
+// Register
+router.post("/register", async (req: Request, res: Response) => {
+  // ✅ FIX: Expect customer_type (snake_case) from frontend
+  const { name, email, phone, address, password, customer_type } = req.body;
 
   try {
-    // Validate input
     if (!name || !email || !phone || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: name, email, phone, password",
+      });
     }
 
-    // Check if email already exists
-    const existingCustomer = await findCustomerByEmail(email);
-    if (existingCustomer) {
-      return res.status(409).json({ error: "Email already registered" });
+    // ✅ Validate customer_type
+    if (
+      !customer_type ||
+      !["product", "service", "both"].includes(customer_type)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid customer_type. Must be 'product', 'service', or 'both'",
+      });
     }
 
-    // Hash password
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
+    // ✅ Hash password securely
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Register customer
-    const customer = await registerCustomer(
+    // ✅ Register user with correct field name
+    const user = await registerUser(
       name,
       email,
       phone,
       address || "",
-      hashedPassword
+      hashedPassword,
+      customer_type // ✅ Pass snake_case
     );
 
-    res.status(201).json({
+    // ✅ Return proper response format
+    return res.status(201).json({
       success: true,
-      customer: {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address: customer.address,
-        type: customer.customer_type,
-        registeredAt: customer.created_at,
+      message: "Registration successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address || "",
+        customer_type: user.customer_type,
+        created_at: user.created_at,
       },
     });
-  } catch (error: any) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: error.message || "Registration failed" });
+  } catch (err: any) {
+    console.error("Registration error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Registration failed",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
   }
 });
 
-// Login endpoint
-router.post("/api/login", async (req: Request, res: Response) => {
+// Login
+router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ error: "Email and password required" });
+      return res.status(400).json({
+        success: false,
+        message: "Email and password required",
+      });
     }
 
-    const customer = await findCustomerByEmail(email);
-    if (!customer) {
-      return res.status(401).json({ error: "Customer not found" });
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      customer.password_hash
-    );
+    // ✅ Compare password hash
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
     }
 
-    res.json({
+    // ✅ Return proper response format
+    return res.json({
       success: true,
-      customer: {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address: customer.address,
-        type: customer.customer_type,
-        registeredAt: customer.created_at,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address || "",
+        customer_type: user.customer_type,
+        created_at: user.created_at,
       },
     });
-  } catch (error: any) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Login failed" });
+  } catch (err: any) {
+    console.error("Login error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Login failed",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
   }
 });
 

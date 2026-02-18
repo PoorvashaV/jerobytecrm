@@ -1,21 +1,30 @@
-import { useState } from "react";
-import { ArrowLeft, Star, Zap, Shield, Heart, Plus, Minus } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  ArrowLeft,
+  Star,
+  Zap,
+  Shield,
+  Heart,
+  Plus,
+  Minus,
+  ShoppingCart,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 
 interface Product {
-  id: string;
-  sno: number;
+  product_id: number;
   name: string;
-  image: string;
+  description: string;
   price: number;
-  originalPrice?: number;
+  original_price?: number;
   category: string;
   rating: number;
   reviews: number;
-  description: string;
-  inStock: boolean;
+  image_url: string;
+  in_stock: boolean;
 }
 
 interface CartItem {
@@ -31,250 +40,53 @@ export default function Products() {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const products: Product[] = [
-    // Battery Products
-    {
-      id: "1",
-      sno: 1,
-      name: "SF FSPO - TT60S150",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 12650,
-      originalPrice: 13257,
-      category: "Battery",
-      rating: 4.8,
-      reviews: 45,
-      description: "150AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "2",
-      sno: 2,
-      name: "SF FSPO - TT60S200",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 15950,
-      originalPrice: 16716,
-      category: "Battery",
-      rating: 4.9,
-      reviews: 38,
-      description: "200AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "3",
-      sno: 3,
-      name: "SF FSPO - ST60S100",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 9900,
-      originalPrice: 10375,
-      category: "Battery",
-      rating: 4.7,
-      reviews: 52,
-      description: "100AH Lithium Battery with 24 months warranty",
-      inStock: false,
-    },
-    {
-      id: "4",
-      sno: 4,
-      name: "SF FSPO - ST60S150",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 12400,
-      originalPrice: 12995,
-      category: "Battery",
-      rating: 4.8,
-      reviews: 48,
-      description: "150AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "5",
-      sno: 5,
-      name: "SF FSPO - TT60S150",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 13400,
-      originalPrice: 14043,
-      category: "Battery",
-      rating: 4.9,
-      reviews: 41,
-      description: "150AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "6",
-      sno: 6,
-      name: "SF FSPO - TT60S200",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 16700,
-      originalPrice: 17502,
-      category: "Battery",
-      rating: 4.8,
-      reviews: 39,
-      description: "200AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "7",
-      sno: 7,
-      name: "SF FSPO - ST60S100",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 10400,
-      originalPrice: 10899,
-      category: "Battery",
-      rating: 4.7,
-      reviews: 50,
-      description: "100AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    {
-      id: "8",
-      sno: 8,
-      name: "SF FSPO - ST60S150",
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
-      price: 13200,
-      originalPrice: 13834,
-      category: "Battery",
-      rating: 4.8,
-      reviews: 46,
-      description: "150AH Lithium Battery with 24 months warranty",
-      inStock: true,
-    },
-    // CPU Products
-    {
-      id: "9",
-      sno: 1,
-      name: "Intel Core i7-13700K",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
-      price: 45000,
-      originalPrice: 52000,
-      category: "CPU",
-      rating: 4.9,
-      reviews: 128,
-      description: "High-performance desktop processor with 16 cores",
-      inStock: true,
-    },
-    {
-      id: "10",
-      sno: 2,
-      name: "AMD Ryzen 7 7700X",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
-      price: 42000,
-      originalPrice: 48500,
-      category: "CPU",
-      rating: 4.8,
-      reviews: 95,
-      description: "Powerful processor with 8 cores for gaming and workstations",
-      inStock: true,
-    },
-    {
-      id: "11",
-      sno: 3,
-      name: "Intel Core i5-13600K",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
-      price: 28000,
-      originalPrice: 32000,
-      category: "CPU",
-      rating: 4.7,
-      reviews: 156,
-      description: "Mid-range processor ideal for gaming and content creation",
-      inStock: false,
-    },
-    {
-      id: "12",
-      sno: 4,
-      name: "AMD Ryzen 5 5600X",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
-      price: 18500,
-      originalPrice: 21000,
-      category: "CPU",
-      rating: 4.6,
-      reviews: 203,
-      description: "Budget-friendly processor with excellent performance",
-      inStock: true,
-    },
-    // CCTV Products
-    {
-      id: "13",
-      sno: 1,
-      name: "Hikvision 4MP Turret Camera",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-      price: 8500,
-      originalPrice: 10000,
-      category: "CCTV",
-      rating: 4.8,
-      reviews: 67,
-      description: "4MP resolution with night vision and motion detection",
-      inStock: true,
-    },
-    {
-      id: "14",
-      sno: 2,
-      name: "Dahua 8MP Bullet Camera",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-      price: 12000,
-      originalPrice: 14500,
-      category: "CCTV",
-      rating: 4.9,
-      reviews: 54,
-      description: "8MP resolution with 50m infrared night vision",
-      inStock: true,
-    },
-    {
-      id: "15",
-      sno: 3,
-      name: "CP Plus Dome Camera",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-      price: 6500,
-      originalPrice: 7800,
-      category: "CCTV",
-      rating: 4.7,
-      reviews: 89,
-      description: "2MP dome camera with weatherproof design",
-      inStock: false,
-    },
-    {
-      id: "16",
-      sno: 4,
-      name: "Uniview PTZ Camera",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-      price: 22000,
-      originalPrice: 26000,
-      category: "CCTV",
-      rating: 4.8,
-      reviews: 42,
-      description: "Pan-Tilt-Zoom camera with 4MP resolution",
-      inStock: true,
-    },
-  ];
+  const categories = useMemo(
+    () => ["All Products", "Battery", "CPU", "CCTV"],
+    []
+  );
 
-  const categories = [
-    "All Products",
-    "Battery",
-    "CPU",
-    "CCTV",
-  ];
+  // ✅ Fetch products from backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const filteredProducts = selectedCategory
-    ? selectedCategory === "All Products"
-      ? products
-      : products.filter((p) => p.category === selectedCategory)
-    : products;
+        const res = await fetch("/api/products");
 
+        if (!res.ok) {
+          throw new Error(`Failed to fetch products: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("✅ Fetched products:", data);
+        setProducts(data);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        console.error("❌ Error fetching products:", errorMessage);
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // ✅ Filter products by category
+  const filteredProducts = useMemo(() => {
+    if (!selectedCategory || selectedCategory === "All Products") {
+      return products;
+    }
+    return products.filter((p) => p.category === selectedCategory);
+  }, [selectedCategory, products]);
+
+  // ✅ Toggle wishlist
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) =>
       prev.includes(productId)
@@ -283,8 +95,10 @@ export default function Products() {
     );
   };
 
+  // ✅ Get quantity for product
   const getQuantity = (productId: string) => quantities[productId] || 1;
 
+  // ✅ Increase quantity
   const increaseQuantity = (productId: string) => {
     setQuantities((prev) => ({
       ...prev,
@@ -292,6 +106,7 @@ export default function Products() {
     }));
   };
 
+  // ✅ Decrease quantity
   const decreaseQuantity = (productId: string) => {
     setQuantities((prev) => ({
       ...prev,
@@ -299,12 +114,15 @@ export default function Products() {
     }));
   };
 
+  // ✅ Add to cart
   const addToCart = (product: Product, quantity: number) => {
-    const existingItem = cart.find((item) => item.productId === product.id);
+    const productIdStr = product.product_id.toString();
+    const existingItem = cart.find((item) => item.productId === productIdStr);
+
     if (existingItem) {
       setCart((prev) =>
         prev.map((item) =>
-          item.productId === product.id
+          item.productId === productIdStr
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
@@ -313,18 +131,42 @@ export default function Products() {
       setCart((prev) => [
         ...prev,
         {
-          productId: product.id,
+          productId: productIdStr,
           name: product.name,
           price: product.price,
           quantity: quantity,
         },
       ]);
     }
-    // Show alert with cart confirmation
+
+    // ✅ Show success notification
+    const totalPrice = product.price * quantity;
     alert(
-      `✓ Added to Cart\n\nProduct: ${product.name}\nQuantity: ${quantity}\nPrice: ₹${(product.price * quantity).toLocaleString('en-IN')}\n\nTotal Items in Cart: ${cart.length + 1}`
+      `✅ Added to Cart\n\nProduct: ${product.name}\nQuantity: ${quantity}\nPrice: ₹${totalPrice.toLocaleString(
+        "en-IN"
+      )}\n\nTotal Items in Cart: ${cart.length + 1}`
     );
+
+    // ✅ Reset quantity after adding to cart
+    setQuantities((prev) => ({
+      ...prev,
+      [productIdStr]: 1,
+    }));
   };
+
+  // ✅ Loading state
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading products...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -352,19 +194,47 @@ export default function Products() {
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-2 text-gray-600">
               <Zap className="w-4 h-4 text-yellow-500" />
-              <span>{filteredProducts.length} Products</span>
+              <span>
+                {filteredProducts.length} Product
+                {filteredProducts.length !== 1 ? "s" : ""}
+              </span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <Shield className="w-4 h-4 text-green-500" />
               <span>100% Secure</span>
             </div>
+            {cart.length > 0 && (
+              <div className="flex items-center gap-2 text-primary font-semibold">
+                <ShoppingCart className="w-4 h-4" />
+                <span>
+                  {cart.length} Item{cart.length !== 1 ? "s" : ""} in Cart
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-red-700 text-sm font-semibold">Error</p>
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-red-600 hover:text-red-800 underline text-sm font-semibold flex-shrink-0"
+              >
+                Retry
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Categories */}
           <div className="lg:col-span-1">
-            <div className="rounded-xl border border-gray-200 p-6 sticky top-24 shadow-sm" style={{ backgroundColor: 'rgba(217, 232, 248, 1)', borderColor: 'rgba(132, 171, 210, 1)', borderWidth: '1px' }}>
+            <div className="rounded-xl border border-gray-200 p-6 sticky top-24 shadow-sm bg-blue-50">
               <h3 className="text-lg font-bold text-gray-900 mb-4">
                 Categories
               </h3>
@@ -388,107 +258,105 @@ export default function Products() {
                   </button>
                 ))}
               </div>
-
-              {/* Price Info */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <div className="text-sm text-gray-600 space-y-2">
-                  <p className="font-semibold text-gray-900">
-                    Price Range
-                  </p>
-                  <p>
-                    ${Math.min(...filteredProducts.map((p) => p.price)).toFixed(
-                      2
-                    )}{" "}
-                    -{" "}
-                    ${Math.max(...filteredProducts.map((p) => p.price)).toFixed(
-                      2
-                    )}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Products Grid */}
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 text-lg font-semibold">
+                  No products found in this category
+                </p>
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  className="mt-4 text-primary hover:text-blue-600 underline font-semibold"
                 >
-                  {/* Product Image Container */}
-                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 aspect-square">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
+                  View all products
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.product_id}
+                    className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    {/* Product Image */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 aspect-square">
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://via.placeholder.com/400?text=Product+Image";
+                        }}
+                      />
 
-                    {/* Badges */}
-                    <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
-                      <div className="flex flex-col gap-2">
-                        <div className="inline-flex items-center gap-1 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                          <span>#</span>
-                          <span>{product.sno}</span>
-                        </div>
-                        <div className={`inline-flex text-white text-xs font-bold px-3 py-1 rounded-full ${
-                          product.inStock
+                      {/* Availability Badge */}
+                      <div
+                        className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold text-white ${
+                          product.in_stock
                             ? "bg-gradient-to-r from-green-400 to-green-600"
                             : "bg-gradient-to-r from-red-400 to-red-600"
-                        }`}>
-                          {product.inStock ? "Available" : "Out of Stock"}
-                        </div>
+                        }`}
+                      >
+                        {product.in_stock ? "Available" : "Out of Stock"}
                       </div>
+
+                      {/* Discount Badge */}
+                      {product.original_price && (
+                        <div className="absolute bottom-4 right-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-lg">
+                          -
+                          {Math.round(
+                            ((product.original_price - product.price) /
+                              product.original_price) *
+                              100
+                          )}
+                          %
+                        </div>
+                      )}
+
+                      {/* Wishlist Button */}
                       <button
-                        onClick={() => toggleWishlist(product.id)}
-                        className="p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+                        onClick={() =>
+                          toggleWishlist(product.product_id.toString())
+                        }
+                        className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all"
+                        title={
+                          wishlist.includes(product.product_id.toString())
+                            ? "Remove from wishlist"
+                            : "Add to wishlist"
+                        }
                       >
                         <Heart
                           className={`w-5 h-5 ${
-                            wishlist.includes(product.id)
+                            wishlist.includes(product.product_id.toString())
                               ? "fill-red-500 text-red-500"
-                              : "text-gray-400"
+                              : "text-gray-600"
                           }`}
                         />
                       </button>
                     </div>
 
-                    {/* Discount Badge */}
-                    {product.originalPrice && (
-                      <div className="absolute bottom-4 right-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-lg">
-                        -
-                        {Math.round(
-                          ((product.originalPrice - product.price) /
-                            product.originalPrice) *
-                            100
-                        )}
-                        %
+                    {/* Product Details */}
+                    <div className="p-5 space-y-4">
+                      <div className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-blue-50 px-3 py-1 rounded-full">
+                        <Zap className="w-3 h-3" />
+                        {product.category}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Product Details */}
-                  <div className="p-5 space-y-4">
-                    {/* Category Badge */}
-                    <div className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-blue-50 px-3 py-1 rounded-full">
-                      <Zap className="w-3 h-3" />
-                      {product.category}
-                    </div>
-
-                    {/* Title */}
-                    <div>
                       <h3 className="font-bold text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
                         {product.name}
                       </h3>
                       <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                         {product.description}
                       </p>
-                    </div>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
+                      {/* Rating */}
+                      <div className="flex items-center gap-2">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
@@ -499,84 +367,107 @@ export default function Products() {
                             }`}
                           />
                         ))}
+                        <span className="text-sm font-semibold text-gray-900">
+                          {product.rating}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({product.reviews} review
+                          {product.reviews !== 1 ? "s" : ""})
+                        </span>
                       </div>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {product.rating}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        ({product.reviews} reviews)
-                      </span>
-                    </div>
 
-                    {/* Price Section */}
-                    <div className="pt-2 border-t border-gray-100">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <span className="text-3xl font-bold text-primary">
-                            ₹{product.price.toLocaleString('en-IN')}
-                          </span>
-                          {product.originalPrice && (
-                            <span className="ml-2 text-sm text-gray-500 line-through">
-                              ₹{product.originalPrice.toLocaleString('en-IN')}
+                      {/* Price Section */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <span className="text-3xl font-bold text-primary">
+                              ₹{product.price.toLocaleString("en-IN")}
                             </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Quantity Controls and Buy Now Button */}
-                      <div className="space-y-3">
-                        {/* Quantity Selector */}
-                        <div className={`flex items-center gap-2 border border-gray-200 rounded-lg p-2 ${
-                          !product.inStock ? "opacity-50 cursor-not-allowed bg-gray-50" : ""
-                        }`}>
-                          <span className="text-xs font-semibold text-gray-700 flex-1">Qty</span>
-                          <button
-                            onClick={() => decreaseQuantity(product.id)}
-                            disabled={!product.inStock}
-                            className={`p-1 rounded transition-colors ${
-                              product.inStock
-                                ? "hover:bg-gray-100"
-                                : "cursor-not-allowed"
-                            }`}
-                          >
-                            <Minus className="w-4 h-4 text-gray-600" />
-                          </button>
-                          <span className="w-8 text-center font-semibold text-gray-900">
-                            {getQuantity(product.id)}
-                          </span>
-                          <button
-                            onClick={() => increaseQuantity(product.id)}
-                            disabled={!product.inStock}
-                            className={`p-1 rounded transition-colors ${
-                              product.inStock
-                                ? "hover:bg-gray-100"
-                                : "cursor-not-allowed"
-                            }`}
-                          >
-                            <Plus className="w-4 h-4 text-gray-600" />
-                          </button>
+                            {product.original_price && (
+                              <span className="ml-2 text-sm text-gray-500 line-through">
+                                ₹
+                                {product.original_price.toLocaleString(
+                                  "en-IN"
+                                )}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Buy Now Button */}
-                        <Button
-                          onClick={() => addToCart(product, getQuantity(product.id))}
-                          disabled={!product.inStock}
-                          className={`w-full text-white font-bold py-3 rounded-lg transition-all ${
-                            product.inStock
-                              ? "bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg cursor-pointer"
-                              : "bg-gray-400 cursor-not-allowed opacity-50"
-                          }`}
-                        >
-                          {product.inStock ? "Buy Now" : "Out of Stock"}
-                        </Button>
+                        {/* Quantity Controls and Buy Now Button */}
+                        <div className="space-y-3">
+                          {/* Quantity Selector */}
+                          <div
+                            className={`flex items-center gap-2 border border-gray-200 rounded-lg p-2 ${
+                              !product.in_stock
+                                ? "opacity-50 cursor-not-allowed bg-gray-50"
+                                : ""
+                            }`}
+                          >
+                            <span className="text-xs font-semibold text-gray-700 flex-1">
+                              Qty
+                            </span>
+                            <button
+                              onClick={() =>
+                                decreaseQuantity(
+                                  product.product_id.toString()
+                                )
+                              }
+                              disabled={!product.in_stock}
+                              className={`p-1 rounded transition-colors ${
+                                product.in_stock
+                                  ? "hover:bg-gray-100"
+                                  : "cursor-not-allowed"
+                              }`}
+                            >
+                              <Minus className="w-4 h-4 text-gray-600" />
+                            </button>
+                            <span className="w-8 text-center font-semibold text-gray-900">
+                              {getQuantity(product.product_id.toString())}
+                            </span>
+                            <button
+                              onClick={() =>
+                                increaseQuantity(
+                                  product.product_id.toString()
+                                )
+                              }
+                              disabled={!product.in_stock}
+                              className={`p-1 rounded transition-colors ${
+                                product.in_stock
+                                  ? "hover:bg-gray-100"
+                                  : "cursor-not-allowed"
+                              }`}
+                            >
+                              <Plus className="w-4 h-4 text-gray-600" />
+                            </button>
+                          </div>
+
+                          {/* Buy Now Button */}
+                          <Button
+                            onClick={() =>
+                              addToCart(
+                                product,
+                                getQuantity(product.product_id.toString())
+                              )
+                            }
+                            disabled={!product.in_stock}
+                            className={`w-full text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                              product.in_stock
+                                ? "bg-gradient-to-r from-secondary to-emerald-600 hover:shadow-lg cursor-pointer"
+                                : "bg-gray-400 cursor-not-allowed opacity-50"
+                            }`}
+                          >
+                            <ShoppingCart className="w-4 h-4" />
+                            {product.in_stock ? "Buy Now" : "Out of Stock"}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
-
         </div>
       </div>
     </DashboardLayout>
