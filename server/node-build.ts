@@ -3,11 +3,20 @@ import express from "express";
 import { createServer } from "./index";
 
 const app = createServer();
-const port = process.env.PORT || 3000;
+// Render uses the PORT environment variable, defaulting to 10000 if not set
+const port = process.env.PORT || 10000;
 
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname;
-const distPath = path.join(__dirname, "../spa");
+
+/**
+ * PATH FIX: 
+ * Your server file is at: /dist/server/production.mjs
+ * Your frontend files are at: /dist/
+ * We go UP two levels (../../) to get out of 'server' and 'dist', 
+ * then back INTO 'dist' to find the static assets.
+ */
+const distPath = path.resolve(__dirname, "../../dist/spa");
 
 // Serve static files
 app.use(express.static(distPath));
@@ -20,10 +29,14 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
-app.listen(port, () => {
+/**
+ * HOST FIX:
+ * We add "0.0.0.0" to ensure the server listens on all network interfaces.
+ * This is a requirement for Render deployments.
+ */
+app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${port}`);
-  console.log(`📱 Frontend: http://localhost:${port}`);
-  console.log(`🔧 API: http://localhost:${port}/api`);
+  console.log(`📱 Static files being served from: ${distPath}`);
 });
 
 // Optional graceful shutdown
