@@ -16,7 +16,11 @@ const __dirname = import.meta.dirname;
  * We go UP two levels (../../) to get out of 'server' and 'dist', 
  * then back INTO 'dist' to find the static assets.
  */
+<<<<<<< HEAD
 const distPath = path.resolve(__dirname, "../../dist/spa");
+=======
+const distPath = path.resolve(__dirname, "../../dist");
+>>>>>>> 9d6822d635b841e810150c6314f02080440b35b1
 
 // Serve static files
 app.use(express.static(distPath));
