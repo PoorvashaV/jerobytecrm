@@ -11,15 +11,10 @@ const __dirname = import.meta.dirname;
 
 /**
  * PATH FIX: 
- * Your server file is at: /dist/server/production.mjs
- * Your frontend files are at: /dist/
- * We go UP two levels (../../) to get out of 'server' and 'dist', 
- * then back INTO 'dist' to find the static assets.
+ * We use 'dist/spa' because your build logs showed that's where the HTML is.
+ * path.resolve(__dirname, "../../dist/spa") goes from /dist/server/ up to root and into /dist/spa/
  */
-
 const distPath = path.resolve(__dirname, "../../dist/spa");
-const distPath = path.resolve(__dirname, "../../dist");
-
 
 // Serve static files
 app.use(express.static(distPath));
