@@ -10,10 +10,7 @@
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
-  "pkg": {
-  "assets": ["dist/spa/*"],
-  "scripts": ["dist/server/**/*.js"]
-},
+
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx server/start.ts",
