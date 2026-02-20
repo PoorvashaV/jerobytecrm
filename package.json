@@ -39,8 +39,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1",
     "zod": "^3.25.76",
-    "vite": "^7.1.2",                // ✅ moved here
-    "@vitejs/plugin-react-swc": "^4.0.0" // ✅ also needed at build time
+    "vite": "^7.1.2",                
+    "@vitejs/plugin-react-swc": "^4.0.0" 
   },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.1",
