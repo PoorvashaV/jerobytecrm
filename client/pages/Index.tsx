@@ -92,7 +92,7 @@ export default function Index() {
     if (formData.password.length < 6) {
       setRegisterError("Password must be at least 6 characters");
       setIsLoading(false);
-      return;
+      return
     }
 
     // 🔍 DEBUG: Log form data before sending
