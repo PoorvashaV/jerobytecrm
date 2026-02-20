@@ -2,10 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
-import { handleDemo } from "./routes/demo.js";
-import authRouter from "./routes/auth.js";
-import productsRouter from "./routes/products.js";
-import notificationsRouter from "./routes/notifications.js";
+// FIX: Remove the .js extensions from these local imports
+import { handleDemo } from "./routes/demo";
+import authRouter from "./routes/auth";
+import productsRouter from "./routes/products";
+import notificationsRouter from "./routes/notifications";
 
 export function createServer() {
   const app = express();
@@ -20,18 +21,14 @@ export function createServer() {
     res.send("Backend is running 🚀");
   });
 
-  // Example API routes
+  // API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
   });
 
   app.get("/api/demo", handleDemo);
-
-  // Auth routes
   app.use("/api/auth", authRouter);
-
-  // Products routes
   app.use("/api/products", productsRouter);
 
   // Notifications routes
