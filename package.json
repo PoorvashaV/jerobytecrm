@@ -16,11 +16,12 @@
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
-    "test": "vitest --run",
     "lint": "tsc --noEmit && prettier --check .",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.84.2",
+    "lucide-react": "^0.539.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
