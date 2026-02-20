@@ -13,20 +13,20 @@
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx server/start.ts",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",
-    "build": "npm run build:client && npm run build:server",
+    "dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
+    "build": "pnpm run build:client && pnpm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
-    "start:dev": "npm run dev:all",
+    "start:dev": "pnpm run dev:all",
     "test": "vitest --run",
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "lint": "npm run typecheck && npm run format:check",
+    "lint": "pnpm run typecheck && pnpm run format:check",
     "clean": "rm -rf dist node_modules",
-    "reinstall": "npm run clean && npm install"
+    "reinstall": "pnpm run clean && pnpm install"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
