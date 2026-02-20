@@ -1,6 +1,7 @@
 import { Router } from "express";
-import pool from "../db/connection.js";       
-import { notifyUser } from "../utils/notify.js"; 
+// FIX: Remove .js extensions
+import pool from "../db/connection";       
+import { notifyUser } from "../utils/notify"; 
 
 const router = Router();
 
