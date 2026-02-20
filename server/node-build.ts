@@ -11,8 +11,8 @@ const __dirname = import.meta.dirname;
 
 /**
  * PATH FIX: 
- * We use 'dist/spa' because your build logs showed that's where the HTML is.
- * path.resolve(__dirname, "../../dist/spa") goes from /dist/server/ up to root and into /dist/spa/
+ * Your server file is at: /dist/server/node-build.mjs
+ * Your frontend files are at: /dist/spa/
  */
 const distPath = path.resolve(__dirname, "../../dist/spa");
 
