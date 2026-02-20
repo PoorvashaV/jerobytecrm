@@ -1,66 +1,91 @@
-{
-  "name": "jerobytecrm",
-  "version": "1.0.0",
-  "description": "Easy Profit - Post Sales Service CRM",
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=9.0.0"
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./client/**/*.{ts,tsx}"],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
   },
-  "scripts": {
-    "dev": "vite",
-    "dev:server": "tsx server/start.ts",
-    "dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
-    "build": "pnpm run build:client && pnpm run build:server",
-    "build:client": "vite build",
-    "build:server": "vite build --config vite.config.server.ts",
-    "start": "node dist/server/node-build.mjs",
-    "lint": "tsc --noEmit && prettier --check .",
-    "clean": "rm -rf dist node_modules"
-  },
-  "dependencies": {
-    "@tanstack/react-query": "^5.84.2",
-    "lucide-react": "^0.539.0",
-    "next-themes": "^0.4.6",
-    "sonner": "^1.7.4",
-    "tailwindcss-animate": "^1.0.7",
-    "class-variance-authority": "^0.7.1",
-    "tailwind-merge": "^2.6.0",
-    "clsx": "^2.1.1",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-separator": "^1.1.0",
-    "@radix-ui/react-dropdown-menu": "^2.1.1",
-    "@radix-ui/react-tooltip": "^1.1.2",
-    "@radix-ui/react-dialog": "^1.1.1",
-    "@radix-ui/react-label": "^2.1.0",
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^5.0.1",
-    "pg": "^8.13.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0",
-    "zod": "^3.23.8",
-    "vite": "^6.0.0",
-    "@vitejs/plugin-react-swc": "^3.7.2"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.10.1",
-    "@types/pg": "^8.11.10",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^9.1.0",
-    "postcss": "^8.4.49",
-    "prettier": "^3.4.1",
-    "tailwindcss": "^3.4.15",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.6"
-  }
-}
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
